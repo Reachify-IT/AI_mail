@@ -1099,8 +1099,8 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 <body>
     <div class="container">
         <!-- Template 5: SEO Strategy Outreach -->
-        <h2>Hi {client_name}, Let’s Boost {client_website}’s SEO! 🚀</h2>
-        <p>I performed a quick SEO audit on {client_website} and found some **key areas for improvement** that can enhance your search rankings.</p>
+        <h2>Hi {client_name}, Let’s Boost {client_company}’s SEO! 🚀</h2>
+        <p>I performed a quick SEO audit on {client_company} and found some **key areas for improvement** that can enhance your search rankings.</p>
 
         <h3>Key Opportunities:</h3>
         <ul>
@@ -1147,72 +1147,3 @@ def generate_response(system_prompt):
 
 
 
-
-
-
-
-# @app.post("/process-email/")
-# def process_email(data: RequestData):
-#     try:
-#         client_about_website = process_input(data.client_website)
-#         # print(client_about_website)
-#         print(1)
-#         system_prompt = train_model(data.my_company, data.my_designation, data.my_name, data.my_mail, data.my_work, data.client_name, data.client_company,
-#                                     data.client_designation, data.client_mail, data.client_website, data.client_website_issue,
-#                                     client_about_website)
-#         print(2)
-#         # st.session_state['system_prompt'] = system_prompt
-#         response = generate_response(system_prompt)
-#         if not response:
-#             raise HTTPException(status_code=500, detail="Response from LLM is empty.")
-#         print(3)
-#         response = re.sub(r"\*\*", "", response)
-#         print(4)
-#         # print(response)
-#         # st.write(response)
-#         # Extracting the parts
-#         my_subject_text, my_body_text = extract_email_parts(response)
-#         print(5)
-#         # st.write(my_subject_text)
-#         # st.write(my_body_text)
-#         final_response = generate_response(
-#             train_model_2(data.my_company, data.my_designation, data.my_name, data.my_mail, data.my_work, data.client_name, data.client_company,
-#                           data.client_designation, data.client_mail, data.client_website, data.client_website_issue, client_about_website,
-#                           data.my_cta_link, my_body_text))
-
-#         if not final_response:
-#             raise HTTPException(status_code=500, detail="Response from LLlllllllM is empty.")
-
-#         # Replace '{{' with '{'
-#         text = re.sub(r"\{\{", "{", final_response)
-
-#         # Replace '}}' with '}'
-#         final_response = re.sub(r"\}\}", "}", text)
-
-#         pattern = r'```(.*?)```'
-
-#         # Extracting code using regex
-#         matches = re.findall(pattern, final_response, re.DOTALL)
-
-#         pattern = r"^.*?<\s*!DOCTYPE\s+html.*?>\s*"
-
-#         # Apply regex substitution
-#         cleaned_text = re.sub(pattern, "", matches[0], flags=re.DOTALL | re.IGNORECASE)
-
-#         # print(cleaned_text)
-
-#         if "<html>" not in cleaned_text:
-#             # print(my_subject_text, my_body_text)
-#             return {
-#                 "subject": my_subject_text,
-#                 "body_text": my_body_text
-#             }
-#         else:
-
-#             return {
-#                 "subject": my_subject_text,
-#                 "cleaned_html": cleaned_text
-#             }
-
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
