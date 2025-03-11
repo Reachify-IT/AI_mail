@@ -566,7 +566,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 <body>
     <div class="container">
         <h1>Hi {client_name},</h1>
-        <p>I recently checked out your website, and while it’s already impressive, there are some areas that could be optimized for a **better user experience and conversions**.</p>
+        <p>I recently checked out your website, and while it’s already impressive, there are some areas that could be optimized for a <strong>better user experience and conversions<strong>.</p>
 
         <h2>Key Issues Noticed:</h2>
         <ul>
@@ -583,10 +583,11 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             <p><a href="{video_path}" class="button">🎥 Watch Video</a></p>
         </div>
 
-        <p>I'd love to collaborate with you and help improve these aspects. Let’s explore some **quick and actionable solutions** tailored for {client_company}.</p>
+        <p>I'd love to collaborate with you and help improve these aspects. Let’s explore some <strong>quick and actionable solutions</strong> tailored for {client_company}.</p>
 
+        <div style="text-align: center;">
         <p><a href="{my_cta_link}" class="button">Let’s Discuss the Fixes</a></p>
-
+        </div>
         <p>Looking forward to your thoughts!</p>
 
         <p>Best,<br>{my_name} <br> {my_designation} <br> {my_company} <br> <a href="mailto:{my_mail}">{my_mail}</a></p>
@@ -635,14 +636,14 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 <body>
     <div class="container">
         <h2>🚀 Let’s Optimize Your Website, {client_name}!</h2>
-        <p>Hey {client_name}, I took a look at **{client_company}’s website**, and I see great potential! A few targeted tweaks could **significantly improve user experience and engagement**.</p>
+        <p>Hey {client_name}, I took a look at <strong>{client_company}’s website</strong>, and I see great potential! A few targeted tweaks could <strong>significantly improve user experience and engagement</strong>.</p>
 
         <h3>Quick Wins We Can Implement:</h3>
         <ul>
-            <li>📌 **Smoother navigation** to improve user flow</li>
-            <li>⚡ **Speed optimization** to reduce page load time</li>
-            <li>🎨 **Refined design elements** for brand consistency</li>
-            <li>📞 **Better contact placement** to increase conversions</li>
+            <li>📌 <strong>Smoother navigation</strong> to improve user flow</li>
+            <li>⚡ <strong>Speed optimization</strong> to reduce page load time</li>
+            <li>🎨 <strong>Refined design elements</strong> for brand consistency</li>
+            <li>📞 <strong>Better contact placement</strong> to increase conversions</li>
         </ul>
 
         <p>I've created a short video explaining the possible improvements. You can watch it below:</p>
@@ -652,7 +653,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             <p><a href="{video_path}" class="cta-button">🎥 Watch Video</a></p>
         </div>
 
-        <p>I’d love to share some quick strategies that can **deliver results without disrupting your current setup.**</p>
+        <p>I’d love to share some quick strategies that can <strong>deliver results without disrupting your current setup.</strong></p>
 
         <a href="{my_cta_link}" class="cta-button">Let’s Chat About It</a>
 
@@ -705,14 +706,14 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 <body>
     <div class="container">
         <h2>🚀 Time to Supercharge Your Website, {client_name}!</h2>
-        <p>Hey {client_name}, I was checking out **{client_company}**’s site, and I noticed some easy **performance and UX improvements** that could take your brand to the next level.</p>
+        <p>Hey {client_name}, I was checking out <strong>{client_company}</strong>’s site, and I noticed some easy <strong>performance and UX improvements</strong> that could take your brand to the next level.</p>
 
         <h3>Here’s What We Can Optimize:</h3>
         <ul>
-            <li>💡 **Better Navigation** – Ensure a seamless experience</li>
-            <li>⚡ **Faster Load Times** – Speed = higher engagement</li>
-            <li>🎨 **Sleek & Modern Design Enhancements**</li>
-            <li>📞 **Contact Form Fixes** – Make it easier for leads to reach you</li>
+            <li>💡 <strong>Better Navigation</strong> – Ensure a seamless experience</li>
+            <li>⚡ <strong>Faster Load Times</strong> – Speed = higher engagement</li>
+            <li>🎨 <strong>Sleek & Modern Design Enhancements</strong></li>
+            <li>📞 <strong>Contact Form Fixes</strong> – Make it easier for leads to reach you</li>
         </ul>
 
         
@@ -724,7 +725,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         </div>
 
 
-        <p>Let’s make **small changes for big results**! I’d love to share how we can get started.</p>
+        <p>Let’s make <strong>small changes for big results</strong>! I’d love to share how we can get started.</p>
 
         <a href="{my_cta_link}" class="cta-button">Let’s Optimize Together</a>
 
@@ -775,13 +776,13 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 <body>
     <div class="container">
         <h2>Hi {client_name}, Let’s Elevate {client_company}’s Website! 🎯</h2>
-        <p>Your website has great potential, but a few refinements could significantly **enhance performance and user experience.**</p>
+        <p>Your website has great potential, but a few refinements could significantly <strong>enhance performance and user experience.</strong></p>
 
         <h3>Key Enhancements:</h3>
         <ul>
-            <li>✔️ Faster load times for **better engagement**</li>
-            <li>✔️ Enhanced design consistency **for brand trust**</li>
-            <li>✔️ Improved contact forms **for more leads**</li>
+            <li>✔️ Faster load times for <strong>better engagement</strong></li>
+            <li>✔️ Enhanced design consistency <strong>for brand trust</strong></li>
+            <li>✔️ Improved contact forms <strong>for more leads</strong></li>
         </ul>
 
         
@@ -792,7 +793,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             <p><a href="{video_path}" class="cta-button">🎥 Watch Video</a></p>
         </div>
 
-        <p>Let’s chat about **simple, high-impact changes** that can help {client_company} thrive online.</p>
+        <p>Let’s chat about <strong>simple, high-impact changes</strong> that can help {client_company} thrive online.</p>
 
         
 
@@ -1100,19 +1101,19 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
     <div class="container">
         <!-- Template 5: SEO Strategy Outreach -->
         <h2>Hi {client_name}, Let’s Boost {client_company}’s SEO! 🚀</h2>
-        <p>I performed a quick SEO audit on {client_company} and found some **key areas for improvement** that can enhance your search rankings.</p>
+        <p>I performed a quick SEO audit on {client_company} and found some <strong>key areas for improvement</strong> that can enhance your search rankings.</p>
 
         <h3>Key Opportunities:</h3>
         <ul>
-            <li>✔️ Addressing keyword gaps for **higher visibility**</li>
-            <li>✔️ Building backlinks to **boost domain authority**</li>
-            <li>✔️ On-page SEO fixes for **better indexing**</li>
+            <li>✔️ Addressing keyword gaps for <strong>higher visibility</strong></li>
+            <li>✔️ Building backlinks to <strong>boost domain authority</strong></li>
+            <li>✔️ On-page SEO fixes for <strong>better indexing</strong></li>
         </ul>
 
         <p>I’ve created a short video explaining the audit insights. You can watch it below:</p>
         <p style="text-align: center;"><a href="{video_path}" class="button">🎥 Watch My Audit</a></p>
         
-        <p>Let’s chat about an **SEO strategy tailored** to help {client_company} rank higher and get more organic traffic.</p>
+        <p>Let’s chat about an <strong>SEO strategy tailored</strong> to help {client_company} rank higher and get more organic traffic.</p>
         <p><a href="{my_cta_link}" class="button">Schedule a Strategy Call</a></p>
         
         <p>Best,<br><br>{my_name}<br>{my_designation}<br>{my_company}<br><a href="mailto:{my_mail}">{my_mail}</a></p>
@@ -1123,11 +1124,10 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 ---
 
 
-
 **  IMPORTANT **
 
 Generate only one custom html email on the basis of body text provided.
-Replace the body of example with the body text given and make it more optimize and outreach level full.
+Replace the body of example with the body_text given and make it more optimize and outreach level.
 """
     return system_prompt_1
 

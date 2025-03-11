@@ -54,11 +54,16 @@ def process_email(data: RequestData):
         matches = re.findall(r"```(.*?)```", final_response, re.DOTALL)
         cleaned_html = re.sub(r"^.*?<\s*!DOCTYPE\s+html.*?>\s*", "", matches[0], flags=re.DOTALL | re.IGNORECASE) if matches else ""
 
+        cleaned_html = re.sub(r"\\\*", "*", cleaned_html)
+
+        if not re.search(r"<\s*html\b.*?>", cleaned_html, re.IGNORECASE | re.DOTALL):
+            cleaned_html = ""
+
         # print(cleaned_html)
 
         return {
             "subject": my_subject_text,
-            ("cleaned_html" if "<html>" in cleaned_html else "body_text"): cleaned_html or my_body_text
+            "cleaned_html": cleaned_html
         }
 
     except Exception as e:
