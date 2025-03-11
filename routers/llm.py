@@ -53,7 +53,6 @@ app = FastAPI()
 #     client_name: str
 #     client_company: str
 #     client_designation: str
-#     client_mail: str
 #     client_website: str
 #     client_website_issue: str
 
@@ -220,7 +219,7 @@ def extract_email_parts(email_text):
 
 
 def train_model(my_company, my_designation, my_name, my_mail, my_work, client_name, client_company, client_designation,
-                client_mail, client_website, client_website_issue, client_about_website):
+                client_website, client_website_issue, client_about_website):
     system_prompt = f"""You are an outreach expert at {my_company} specializing in **custom, high-converting cold emails**. Your goal is to generate a **single compelling email** that feels natural, persuasive, and engaging—without being overly formal or robotic.  
 
 Use the following **context**:  
@@ -231,8 +230,7 @@ Use the following **context**:
 
 - **Client Name**: {client_name}  
 - **Client Company**: {client_company}  
-- **Client Role**: {client_designation}  
-- **Client Contact**: {client_mail}  
+- **Client Role**: {client_designation}   
 - **Client Website**: [{client_company} Website]({client_website})  
 - **Issue Identified**: {client_website_issue}  
 - **Insights from Website**: {client_about_website}  
@@ -258,7 +256,7 @@ Generate **both a subject** and **a full email body**.
 
 ### **Example Output**  
 
-**Subject:** Let’s Unlock {client_company}’s Website Potential 🚀  
+**Subject:** Let’s Unlock {client_company}’s Website Potential
 
 **Email Body:**  
 
@@ -293,7 +291,7 @@ Would love to share some quick wins—open to a quick chat?
 
 **Generated Email:** 
 
-**Subject:** Your Website Deserves Better—Here’s How 🚀 
+**Subject:** Your Website Deserves Better—Here’s How
 
 Hey {client_name}, 
 
@@ -365,7 +363,7 @@ Think it’s worth a quick call? Let me know!
 
 **Generated Email:** 
 
-**Subject:** Your App Shouldn’t Be Losing Users—Let’s Fix That 📱 
+**Subject:** Your App Shouldn’t Be Losing Users—Let’s Fix That 
 
 
 Hey {client_name}, 
@@ -406,7 +404,7 @@ What do you think?
 
 **Generated Email:** 
 
-**Subject:** Let’s Make Your Social Ads Work 10x Harder 🚀 
+**Subject:** Let’s Make Your Social Ads Work 10x Harder
 
 
 Hey {client_name}, 
@@ -445,7 +443,7 @@ Interested? Let’s chat—I’d love to help.
 
 **Generated Email:** 
 
-**Subject:** Time for a CRM Upgrade? Let’s Talk ⚡ 
+**Subject:** Time for a CRM Upgrade? Let’s Talk
 
 
 Hey {client_name}, 
@@ -478,7 +476,7 @@ I’ve helped other businesses **upgrade without disrupting operations**, and I�
 
 
 def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_name, client_company,
-                  client_designation, client_mail, client_website, client_website_issue, client_about_website,
+                  client_designation, client_website, client_website_issue, client_about_website,
                   my_cta_link, my_body_text, video_path):
     system_prompt_1 = f"""You are an expert in generating precise, structured, and visually appealing **HTML email**. Your primary task is to **convert the provided email body text (`{my_body_text}`) into a clean, responsive HTML email** with proper formatting while ensuring no alterations to the content.
 
@@ -495,7 +493,6 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
       - Name: {client_name}
       - Designation: {client_designation}
       - Company: {client_company}
-      - Email: {client_mail}
       - Website: {client_website}
       - Website Issues: {client_website_issue}
       - About Website Analysis: {client_about_website}
@@ -510,6 +507,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
        - Convert `{my_body_text}` directly into **HTML with proper `<h1>`, `<h2>`, `<p>`, `<ul>`, `<strong>`, and `<em>` tags** where needed.
        - Maintain line breaks, indentation, and spacing **exactly as in the original text**.
        - Use **consistent typography** for readability.
+
 
     2. **Responsive Design**:
        - Ensure the email is **mobile-friendly** and adapts to different screen sizes.
@@ -532,7 +530,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
     Generate a **fully formatted HTML email** with inline styles, ensuring `{my_body_text}` remains **unaltered** while being properly structured for readability. The footer should be correctly generated at end  contain my_name, my_designation, my_company and my email ef provided.
 
     ---
-** Use the below formats as example and generate a customized html email according to the data given:
+** Use the below formats as example and generate a customized html email according to the body text data given:
 
 
 ### **💡 Example 1: 
@@ -619,12 +617,12 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             padding: 30px;
             margin: auto;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+       
         }}
         .cta-button {{
             display: block;
             text-align: center;
-            background-color: #28a745;
+            background-color: #007bff;
             color: white;
             padding: 14px;
             margin-top: 20px;
@@ -660,7 +658,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 
         <p>Looking forward to your thoughts!</p>
 
-        <p>Best, <br> {my_name} <br> {my_designation} <br> {my_company} <br> <a href="mailto:{my_mail}">{my_mail}</a></p>
+        <p>Best, <br><br> {my_name} <br> {my_designation} <br> {my_company} <br> <a href="mailto:{my_mail}">{my_mail}</a></p>
     </div>
 </body>
 </html>
@@ -689,12 +687,12 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             padding: 30px;
             margin: auto;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(255,255,255,0.1);
+    
         }}
         .cta-button {{
             display: block;
             text-align: center;
-            background-color: #ff9800;
+            background-color: #007bff;
             color: white;
             padding: 14px;
             margin-top: 20px;
@@ -730,7 +728,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 
         <a href="{my_cta_link}" class="cta-button">Let’s Optimize Together</a>
 
-        <p>Best, <br> {my_name} <br> {my_designation} <br> {my_company} <br> <a href="mailto:{my_mail}">{my_mail}</a></p>
+        <p>Best, <br><br> {my_name} <br> {my_designation} <br> {my_company} <br> <a href="mailto:{my_mail}">{my_mail}</a></p>
     </div>
 </body>
 </html>
@@ -759,12 +757,12 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             padding: 30px;
             margin: auto;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+
         }}
         .cta-button {{
             display: block;
             text-align: center;
-            background-color: #ff5733;
+            background-color: #007bff;
             color: white;
             padding: 14px;
             margin-top: 20px;
@@ -800,16 +798,336 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 
         <a href="{my_cta_link}" class="cta-button">Let’s Connect & Improve</a>
 
-        <p>Best, <br> {my_name} <br> {my_designation} <br> {my_company} <br> <a href="mailto:{my_mail}">{my_mail}</a></p>
+        <p>Best, <br><br> {my_name} <br> {my_designation} <br> {my_company} <br> <a href="mailto:{my_mail}">{my_mail}</a></p>
     </div>
 </body>
 </html>
 ```
 
 
-**  IMPORTANT **
-Generate only one custom html email on the basis of body text provided.
 
+
+### **💡 Example 5: 
+
+---html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }}
+        .container {{
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }}
+        .button {{
+            display: block;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 14px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hi {client_name}, Let’s Elevate {client_company}’s Website! 🎯</h2>
+        <p>Your website has great potential, but a few refinements could significantly <strong>enhance performance and user experience.</strong></p>
+
+        <h3>Key Enhancements:</h3>
+        <ul>
+            <li>✔️ Faster load times for <strong>better engagement</strong></li>
+            <li>✔️ Enhanced design consistency <strong>for brand trust</strong></li>
+            <li>✔️ Improved contact forms <strong>for more leads</strong></li>
+        </ul>
+
+        <p>I’ve created a short video explaining the possible improvements. You can watch it below:</p>
+        <p style="text-align: center;"><a href="{video_path}" class="button">🎥 Watch Video</a></p>
+        
+        <p>Let’s chat about <strong>simple, high-impact changes</strong> that can help {client_company} thrive online.</p>
+        <p><a href="{my_cta_link}" class="button">Let’s Connect & Improve</a></p>
+        
+        <p>Best,<br><br>{my_name}<br>{my_designation}<br>{my_company}<br><a href="mailto:{my_mail}">{my_mail}</a></p>
+    </div>
+</body>
+</html>
+
+---
+
+
+### **💡 Example 6: 
+
+```html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }}
+        .container {{
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }}
+        .button {{
+            display: block;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 14px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hi {client_name}, Let’s Optimize {client_company}’s Software! 🚀</h2>
+        <p>Your software has immense potential, and with a few strategic upgrades, we can <strong>enhance performance, security, and user retention.</strong></p>
+
+        <h3>Key Areas for Improvement:</h3>
+        <ul>
+            <li>✔️ Code optimization for <strong>faster load times</strong></li>
+            <li>✔️ Security patches to <strong>safeguard user data</strong></li>
+            <li>✔️ UX/UI enhancements for <strong>seamless navigation</strong></li>
+        </ul>
+
+        <p>I’ve put together a quick analysis video with tailored insights for {client_company}. Check it out below:</p>
+        <p style="text-align: center;"><a href="{video_path}" class="button">🎥 Watch Analysis</a></p>
+        
+        <p>Let’s explore simple, high-impact upgrades that will maximize {client_company}’s efficiency and growth.</p>
+        <p><a href="{my_cta_link}" class="button">Let’s Connect & Improve</a></p>
+        
+        <p>Best,<br><br>{my_name}<br>{my_designation}<br>{my_company}<br><a href="mailto:{my_mail}">{my_mail}</a></p>
+    </div>
+</body>
+</html>
+
+
+---
+
+
+### **💡 Example 7: 
+
+```html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }}
+        .container {{
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }}
+        .button {{
+            display: block;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 14px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hi {client_name}, Let’s Supercharge {client_company}’s Ads! 📈</h2>
+        <p>Your ads are performing well, but a few strategic tweaks can <strong>significantly boost conversions and ROI.</strong></p>
+
+        <h3>Key Improvement Areas:</h3>
+        <ul>
+            <li>✔️ Ad copy refinements for <strong>higher engagement</strong></li>
+            <li>✔️ Advanced audience targeting for <strong>better lead quality</strong></li>
+            <li>✔️ Landing page optimizations to <strong>increase conversions</strong></li>
+        </ul>
+
+        <p>I’ve put together a quick breakdown video outlining the biggest opportunities for {client_company}. Check it out below:</p>
+        <p style="text-align: center;"><a href="{video_path}" class="button">🎥 Watch My Breakdown</a></p>
+        
+        <p>Let’s refine your ads and maximize returns!</p>
+        <p><a href="{my_cta_link}" class="button">Let’s Optimize Your Ads</a></p>
+        
+        <p>Best,<br><br>{my_name}<br>{my_designation}<br>{my_company}<br><a href="mailto:{my_mail}">{my_mail}</a></p>
+    </div>
+</body>
+</html>
+
+---
+
+
+### **💡 Example 8: 
+
+```html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }}
+        .container {{
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }}
+        .button {{
+            display: block;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 14px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hi {client_name}, Let’s Perfect {client_company}’s Landing Page! 🚀</h2>
+        <p>Your landing page has strong potential, and a few strategic tweaks can <strong>boost conversions significantly.</strong></p>
+
+        <h3>Key Optimization Areas:</h3>
+        <ul>
+            <li>✔️ Stronger CTA placements for <strong>higher engagement</strong></li>
+            <li>✔️ Faster load speed to <strong>reduce drop-offs</strong></li>
+            <li>✔️ Clearer messaging for <strong>better user understanding</strong></li>
+        </ul>
+
+        <p>I’ve put together a quick video breakdown with insights tailored to {client_company}. Check it out below:</p>
+        <p style="text-align: center;"><a href="{video_path}" class="button">🎥 See My Suggestions</a></p>
+        
+        <p>Let’s fine-tune your page and increase conversions!</p>
+        <p><a href="{my_cta_link}" class="button">Let’s Talk Optimization</a></p>
+        
+        <p>Best,<br><br>{my_name}<br>{my_designation}<br>{my_company}<br><a href="mailto:{my_mail}">{my_mail}</a></p>
+    </div>
+</body>
+</html>
+
+        
+
+
+
+---
+
+
+### **💡 Example 9: 
+
+```html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }}
+        .container {{
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }}
+        .button {{
+            display: block;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 14px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Template 5: SEO Strategy Outreach -->
+        <h2>Hi {client_name}, Let’s Boost {client_website}’s SEO! 🚀</h2>
+        <p>I performed a quick SEO audit on {client_website} and found some **key areas for improvement** that can enhance your search rankings.</p>
+
+        <h3>Key Opportunities:</h3>
+        <ul>
+            <li>✔️ Addressing keyword gaps for **higher visibility**</li>
+            <li>✔️ Building backlinks to **boost domain authority**</li>
+            <li>✔️ On-page SEO fixes for **better indexing**</li>
+        </ul>
+
+        <p>I’ve created a short video explaining the audit insights. You can watch it below:</p>
+        <p style="text-align: center;"><a href="{video_path}" class="button">🎥 Watch My Audit</a></p>
+        
+        <p>Let’s chat about an **SEO strategy tailored** to help {client_company} rank higher and get more organic traffic.</p>
+        <p><a href="{my_cta_link}" class="button">Schedule a Strategy Call</a></p>
+        
+        <p>Best,<br><br>{my_name}<br>{my_designation}<br>{my_company}<br><a href="mailto:{my_mail}">{my_mail}</a></p>
+    </div>
+</body>
+</html>
+
+---
+
+
+
+**  IMPORTANT **
+
+Generate only one custom html email on the basis of body text provided.
+Replace the body of example with the body text given and make it more optimize and outreach level full.
 """
     return system_prompt_1
 

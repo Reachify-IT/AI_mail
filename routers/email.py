@@ -19,7 +19,7 @@ class RequestData(BaseModel):
     client_name: str
     client_company: str
     client_designation: str
-    client_mail: str
+
     client_website: str
     video_path: str
 
@@ -34,7 +34,7 @@ def process_email(data: RequestData):
         system_prompt = train_model(
             data.my_company, data.my_designation, data.my_name, data.my_mail,
             data.my_work, data.client_name, data.client_company, 
-            data.client_designation, data.client_mail, data.client_website, 
+            data.client_designation, data.client_website, 
             client_website_issue, client_about_website
         )
         response = re.sub(r"\*\*", "", generate_response(system_prompt))
@@ -44,7 +44,7 @@ def process_email(data: RequestData):
         final_prompt = train_model_2(
             data.my_company, data.my_designation, data.my_name, data.my_mail,
             data.my_work, data.client_name, data.client_company,
-            data.client_designation, data.client_mail, data.client_website,
+            data.client_designation, data.client_website,
             client_website_issue, client_about_website, data.my_cta_link, my_body_text, data.video_path
         )
         final_response = re.sub(r"\}\}", "}", re.sub(r"\{\{", "{", generate_response(final_prompt)))
@@ -58,7 +58,7 @@ def process_email(data: RequestData):
 
         return {
             "subject": my_subject_text,
-            "cleaned_html" if "<html>" in cleaned_html else "body_text": cleaned_html or my_body_text
+            ("cleaned_html" if "<html>" in cleaned_html else "body_text"): cleaned_html or my_body_text
         }
 
     except Exception as e:
