@@ -507,11 +507,12 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
        - Convert `{my_body_text}` directly into **HTML with proper `<h1>`, `<h2>`, `<p>`, `<ul>`, `<strong>`, and `<em>` tags** where needed.
        - Maintain line breaks, indentation, and spacing **exactly as in the original text**.
        - Use **consistent typography** for readability.
+       - 
 
 
     2. **Responsive Design**:
        - Ensure the email is **mobile-friendly** and adapts to different screen sizes.
-       - Use **inline CSS** to maintain compatibility across different email clients.
+       - Use **External CSS** to maintain compatibility across different email clients.
 
     3. **Call-to-Action (CTA)**:
        - If `{video_path}` is provided, include a **visually clear button** styled for engagement.
@@ -527,7 +528,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
     ---
 
     ### **Output Format:**
-    Generate a **fully formatted HTML email** with inline styles, ensuring `{my_body_text}` remains **unaltered** while being properly structured for readability. The footer should be correctly generated at end  contain my_name, my_designation, my_company and my email ef provided.
+    Generate a **fully formatted HTML email** with External styles, ensuring `{my_body_text}` remains **unaltered** while being properly structured for readability. The footer should be correctly generated at end  contain my_name, my_designation, my_company and my email ef provided.
 
     ---
 ** Use the below formats as example and generate a customized html email according to the body text data given:
@@ -1127,7 +1128,6 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 **  IMPORTANT **
 
 Generate only one custom html email on the basis of body text provided.
-Replace the body of example with the body_text given and make it more optimize and outreach level.
 """
     return system_prompt_1
 
