@@ -556,7 +556,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         .btn {{
             display: inline-block;
             background-color: #007bff;
-            color: white;
+            color: white !important;
             padding: 12px 20px;
             text-decoration: none;
             border-radius: 5px;
@@ -615,7 +615,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         }}
         .container {{
             max-width: 600px;
-            background: white;
+            background: white !important;
             padding: 30px;
             margin: auto;
             border-radius: 10px;
@@ -625,7 +625,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             display: block;
             text-align: center;
             background-color: #007bff;
-            color: white;
+            color: white !important;
             padding: 14px;
             margin-top: 20px;
             border-radius: 5px;
@@ -680,7 +680,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         body {{
             font-family: 'Arial', sans-serif;
             background-color: #222;
-            color: white;
+            color: white !important;
             padding: 20px;
         }}
         .container {{
@@ -695,7 +695,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             display: block;
             text-align: center;
             background-color: #007bff;
-            color: white;
+            color: white !important;
             padding: 14px;
             margin-top: 20px;
             border-radius: 5px;
@@ -755,7 +755,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         }}
         .container {{
             max-width: 600px;
-            background: white;
+            background: white !important;
             padding: 30px;
             margin: auto;
             border-radius: 10px;
@@ -765,7 +765,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             display: block;
             text-align: center;
             background-color: #007bff;
-            color: white;
+            color: white !important;
             padding: 14px;
             margin-top: 20px;
             border-radius: 5px;
@@ -826,7 +826,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         }}
         .container {{
             max-width: 600px;
-            background: white;
+            background: white !important;
             padding: 30px;
             margin: auto;
             border-radius: 10px;
@@ -835,7 +835,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         .btn {{
             display: block;
             background-color: #007bff;
-            color: white;
+            color: white !important;
             text-align: center;
             padding: 14px;
             text-decoration: none;
@@ -888,7 +888,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         }}
         .container {{
             max-width: 600px;
-            background: white;
+            background: white !important;
             padding: 30px;
             margin: auto;
             border-radius: 10px;
@@ -897,7 +897,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         .btn {{
             display: block;
             background-color: #007bff;
-            color: white;
+            color: white !important;
             text-align: center;
             padding: 14px;
             text-decoration: none;
@@ -951,7 +951,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         }}
         .container {{
             max-width: 600px;
-            background: white;
+            background: white !important;
             padding: 30px;
             margin: auto;
             border-radius: 10px;
@@ -960,7 +960,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         .btn {{
             display: block;
             background-color: #007bff;
-            color: white;
+            color: white !important;
             text-align: center;
             padding: 14px;
             text-decoration: none;
@@ -1013,7 +1013,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         }}
         .container {{
             max-width: 600px;
-            background: white;
+            background: white !important;
             padding: 30px;
             margin: auto;
             border-radius: 10px;
@@ -1022,7 +1022,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         .btn {{
             display: block;
             background-color: #007bff;
-            color: white;
+            color: white !important;
             text-align: center;
             padding: 14px;
             text-decoration: none;
@@ -1079,7 +1079,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         }}
         .container {{
             max-width: 600px;
-            background: white;
+            background: white !important;
             padding: 30px;
             margin: auto;
             border-radius: 10px;
@@ -1088,7 +1088,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         .btn {{
             display: block;
             background-color: #007bff;
-            color: white;
+            color: white !important;
             text-align: center;
             padding: 14px;
             text-decoration: none;
