@@ -515,8 +515,8 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
        - Use **External CSS** to maintain compatibility across different email clients.
 
     3. **Call-to-Action (CTA)**:
-       - If `{video_path}` is provided, include a **visually clear button** styled for engagement.
-       - If `{my_cta_link}` is provided, include a **visually clear button** styled for engagement.
+       - If `{video_path}` is provided, include a **visually clear btn** styled for engagement.
+       - If `{my_cta_link}` is provided, include a **visually clear btn** styled for engagement.
        - The CTA **should match the intent of `{my_body_text}`** without modifying its wording.
 
     4. **Style Guidelines**:
@@ -553,7 +553,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             margin: auto;
             padding: 20px;
         }}
-        .button {{
+        .btn {{
             display: inline-block;
             background-color: #007bff;
             color: white;
@@ -581,13 +581,13 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 
         <div style="text-align: center;">
             
-            <p><a href="{video_path}" class="button">🎥 Watch Video</a></p>
+            <p><a href="{video_path}" class="btn">🎥 Watch Video</a></p>
         </div>
 
         <p>I'd love to collaborate with you and help improve these aspects. Let’s explore some <strong>quick and actionable solutions</strong> tailored for {client_company}.</p>
 
         <div style="text-align: center;">
-        <p><a href="{my_cta_link}" class="button">Let’s Discuss the Fixes</a></p>
+        <p><a href="{my_cta_link}" class="btn">Let’s Discuss the Fixes</a></p>
         </div>
         <p>Looking forward to your thoughts!</p>
 
@@ -621,7 +621,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             border-radius: 10px;
        
         }}
-        .cta-button {{
+        .btn {{
             display: block;
             text-align: center;
             background-color: #007bff;
@@ -651,12 +651,12 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 
         <div style="text-align: center;">
             
-            <p><a href="{video_path}" class="cta-button">🎥 Watch Video</a></p>
+            <p><a href="{video_path}" class="btn">🎥 Watch Video</a></p>
         </div>
 
         <p>I’d love to share some quick strategies that can <strong>deliver results without disrupting your current setup.</strong></p>
 
-        <a href="{my_cta_link}" class="cta-button">Let’s Chat About It</a>
+        <a href="{my_cta_link}" class="btn">Let’s Chat About It</a>
 
         <p>Looking forward to your thoughts!</p>
 
@@ -691,7 +691,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             border-radius: 10px;
     
         }}
-        .cta-button {{
+        .btn {{
             display: block;
             text-align: center;
             background-color: #007bff;
@@ -722,13 +722,13 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 
         <div style="text-align: center;">
             
-            <p><a href="{video_path}" class="cta-button">🎥 Watch Video</a></p>
+            <p><a href="{video_path}" class="btn">🎥 Watch Video</a></p>
         </div>
 
 
         <p>Let’s make <strong>small changes for big results</strong>! I’d love to share how we can get started.</p>
 
-        <a href="{my_cta_link}" class="cta-button">Let’s Optimize Together</a>
+        <a href="{my_cta_link}" class="btn">Let’s Optimize Together</a>
 
         <p>Best, <br><br> {my_name} <br> {my_designation} <br> {my_company} <br> <a href="mailto:{my_mail}">{my_mail}</a></p>
     </div>
@@ -761,7 +761,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             border-radius: 10px;
 
         }}
-        .cta-button {{
+        .btn {{
             display: block;
             text-align: center;
             background-color: #007bff;
@@ -791,14 +791,14 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 
         <div style="text-align: center;">
             
-            <p><a href="{video_path}" class="cta-button">🎥 Watch Video</a></p>
+            <p><a href="{video_path}" class="btn">🎥 Watch Video</a></p>
         </div>
 
         <p>Let’s chat about <strong>simple, high-impact changes</strong> that can help {client_company} thrive online.</p>
 
         
 
-        <a href="{my_cta_link}" class="cta-button">Let’s Connect & Improve</a>
+        <a href="{my_cta_link}" class="btn">Let’s Connect & Improve</a>
 
         <p>Best, <br><br> {my_name} <br> {my_designation} <br> {my_company} <br> <a href="mailto:{my_mail}">{my_mail}</a></p>
     </div>
@@ -832,7 +832,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }}
-        .button {{
+        .btn {{
             display: block;
             background-color: #007bff;
             color: white;
@@ -858,10 +858,10 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         </ul>
 
         <p>I’ve created a short video explaining the possible improvements. You can watch it below:</p>
-        <p style="text-align: center;"><a href="{video_path}" class="button">🎥 Watch Video</a></p>
+        <p style="text-align: center;"><a href="{video_path}" class="btn">🎥 Watch Video</a></p>
         
         <p>Let’s chat about <strong>simple, high-impact changes</strong> that can help {client_company} thrive online.</p>
-        <p><a href="{my_cta_link}" class="button">Let’s Connect & Improve</a></p>
+        <p><a href="{my_cta_link}" class="btn">Let’s Connect & Improve</a></p>
         
         <p>Best,<br><br>{my_name}<br>{my_designation}<br>{my_company}<br><a href="mailto:{my_mail}">{my_mail}</a></p>
     </div>
@@ -894,7 +894,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }}
-        .button {{
+        .btn {{
             display: block;
             background-color: #007bff;
             color: white;
@@ -920,10 +920,10 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         </ul>
 
         <p>I’ve put together a quick analysis video with tailored insights for {client_company}. Check it out below:</p>
-        <p style="text-align: center;"><a href="{video_path}" class="button">🎥 Watch Analysis</a></p>
+        <p style="text-align: center;"><a href="{video_path}" class="btn">🎥 Watch Analysis</a></p>
         
         <p>Let’s explore simple, high-impact upgrades that will maximize {client_company}’s efficiency and growth.</p>
-        <p><a href="{my_cta_link}" class="button">Let’s Connect & Improve</a></p>
+        <p><a href="{my_cta_link}" class="btn">Let’s Connect & Improve</a></p>
         
         <p>Best,<br><br>{my_name}<br>{my_designation}<br>{my_company}<br><a href="mailto:{my_mail}">{my_mail}</a></p>
     </div>
@@ -957,7 +957,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }}
-        .button {{
+        .btn {{
             display: block;
             background-color: #007bff;
             color: white;
@@ -983,10 +983,10 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         </ul>
 
         <p>I’ve put together a quick breakdown video outlining the biggest opportunities for {client_company}. Check it out below:</p>
-        <p style="text-align: center;"><a href="{video_path}" class="button">🎥 Watch My Breakdown</a></p>
+        <p style="text-align: center;"><a href="{video_path}" class="btn">🎥 Watch My Breakdown</a></p>
         
         <p>Let’s refine your ads and maximize returns!</p>
-        <p><a href="{my_cta_link}" class="button">Let’s Optimize Your Ads</a></p>
+        <p><a href="{my_cta_link}" class="btn">Let’s Optimize Your Ads</a></p>
         
         <p>Best,<br><br>{my_name}<br>{my_designation}<br>{my_company}<br><a href="mailto:{my_mail}">{my_mail}</a></p>
     </div>
@@ -1019,7 +1019,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }}
-        .button {{
+        .btn {{
             display: block;
             background-color: #007bff;
             color: white;
@@ -1045,10 +1045,10 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         </ul>
 
         <p>I’ve put together a quick video breakdown with insights tailored to {client_company}. Check it out below:</p>
-        <p style="text-align: center;"><a href="{video_path}" class="button">🎥 See My Suggestions</a></p>
+        <p style="text-align: center;"><a href="{video_path}" class="btnn">🎥 See My Suggestions</a></p>
         
         <p>Let’s fine-tune your page and increase conversions!</p>
-        <p><a href="{my_cta_link}" class="button">Let’s Talk Optimization</a></p>
+        <p><a href="{my_cta_link}" class="btn">Let’s Talk Optimization</a></p>
         
         <p>Best,<br><br>{my_name}<br>{my_designation}<br>{my_company}<br><a href="mailto:{my_mail}">{my_mail}</a></p>
     </div>
@@ -1085,7 +1085,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }}
-        .button {{
+        .btn {{
             display: block;
             background-color: #007bff;
             color: white;
@@ -1112,10 +1112,10 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
         </ul>
 
         <p>I’ve created a short video explaining the audit insights. You can watch it below:</p>
-        <p style="text-align: center;"><a href="{video_path}" class="button">🎥 Watch My Audit</a></p>
+        <p style="text-align: center;"><a href="{video_path}" class="btn">🎥 Watch My Audit</a></p>
         
         <p>Let’s chat about an <strong>SEO strategy tailored</strong> to help {client_company} rank higher and get more organic traffic.</p>
-        <p><a href="{my_cta_link}" class="button">Schedule a Strategy Call</a></p>
+        <p><a href="{my_cta_link}" class="btn">Schedule a Strategy Call</a></p>
         
         <p>Best,<br><br>{my_name}<br>{my_designation}<br>{my_company}<br><a href="mailto:{my_mail}">{my_mail}</a></p>
     </div>
