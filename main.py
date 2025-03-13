@@ -7,7 +7,7 @@ app = FastAPI()
 # ✅ CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins (change for security)
+    allow_origins=["loomifyinnovations.com", "backend.loomifyinnovations.com"],  # Allow all origins (change for security)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -18,4 +18,4 @@ app.include_router(email.router, prefix="/api")
 
 @app.get("/")
 def home():
-    return {"message": "Welcome to the Email Processing API Updatesss"}
+    return {"message": "Welcome to the Email Processing API Updatessss"}
