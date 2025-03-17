@@ -51,16 +51,6 @@ async def process_email(data: RequestData):
         response = re.sub(r"\*\*", "", response)
         my_subject_text, email_body_text = extract_email_parts(response)
         email_body_text = re.sub(r"\[\s*Recipient\s*\]", f"{data.my_name}", email_body_text)
-        print("\n=== client ===")
-        print(client_about_website)
-        print("\n=== client ===")
-        print(client_about_website)
-        print("\n=== emaillk ===")
-        print(response)
-        print("\n=== Email Subject ===")
-        print(my_subject_text)
-        print("\n=== Email Body ===")
-        print(email_body_text)
 
 
         final_prompt = train_model_2(
