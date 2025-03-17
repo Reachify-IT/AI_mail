@@ -20,4 +20,4 @@ app.include_router(email.router, prefix="/api")
 
 @app.get("/")
 def home():
-    return {"message": "Welcome to the Email Processing API Updatessss"}
+    return {"message": "Welcome to the Email Processing API Updatesssss"}
