@@ -4,10 +4,12 @@ from routers import email
 
 app = FastAPI()
 
+
 # ✅ CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["loomifyinnovations.com", "backend.loomifyinnovations.com"],  # Allow all origins (change for security)
+    # allow_origins=["loomifyinnovations.com", "backend.loomifyinnovations.com"],  # Allow all origins (change for security)
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

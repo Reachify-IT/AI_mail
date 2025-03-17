@@ -5,11 +5,12 @@ import shutil
 import ollama
 import requests
 import tempfile
+import asyncio
 import chromadb
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 from langchain_community import embeddings
-from langchain_community.llms import Ollama
+# from langchain_community.llms import Ollama
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import ChatPromptTemplate
@@ -17,9 +18,10 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.document_loaders import WebBaseLoader
+from langchain_community.embeddings import OllamaEmbeddings
 
 import requests
-
+import time
 import whisper
 # from moviepy import *
 # from moviepy.editor import VideoFileClip
@@ -27,7 +29,7 @@ from moviepy.video.io.VideoFileClip import VideoFileClip
 
 # os.environ["OLLAMA_HOST"] = "http://172.31.46.239:11434"
 
-
+# ollama_model = ollama.Ollama(model="llama3")
 CHROMA_DB_PATH = "./chromaa_db"
 app = FastAPI()
 
@@ -58,24 +60,20 @@ app = FastAPI()
 
 def reset_chroma():
     try:
-        # Close any existing ChromaDB instances
-        client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
-        client.delete_collection("rag-chroma")
-        del client  # Release resources
-
-        # Ensure files are closed before deleting
-        import time
-        time.sleep(2)  # Wait for 2 seconds
-
-        # Delete the database folder
+        # ✅ Delete ChromaDB directory if it exists
         if os.path.exists(CHROMA_DB_PATH):
             shutil.rmtree(CHROMA_DB_PATH)
             print("✅ ChromaDB directory deleted successfully.")
+
+        # ✅ Wait before initializing a new database
+        time.sleep(2)
+
+        # ✅ Reinitialize ChromaDB
+        client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
+        client.get_or_create_collection("rag-chroma")
+
     except Exception as e:
-        print(f"⚠️ ChromaDB Error: {e}")
-
-
-
+        print(f"⚠️ ChromaDB Reset Error: {e}")
 reset_chroma()  # Call function before initializing the database
 
 
@@ -97,11 +95,25 @@ def download_video(url):
     else:
         raise Exception(f"Failed to download video from URL: {url}")
 
-def extract_audio(video_path, audio_path="temp_audio.wav"):
+# def extract_audio(video_path, audio_path="temp_audio.wav"):
+#     clip = VideoFileClip(video_path)
+#     if clip.audio is None:
+#         raise ValueError("No audio found in the video file. Please upload a valid video with sound.")
+
+#     clip.audio.write_audiofile(audio_path, codec="pcm_s16le")
+#     return audio_path
+
+
+import uuid
+
+def extract_audio(video_path):
+    unique_id = uuid.uuid4().hex  # Generate a unique filename
+    audio_path = f"temp_audio_{unique_id}.wav"
+    
     clip = VideoFileClip(video_path)
     if clip.audio is None:
         raise ValueError("No audio found in the video file. Please upload a valid video with sound.")
-
+    
     clip.audio.write_audiofile(audio_path, codec="pcm_s16le")
     return audio_path
 
@@ -113,13 +125,6 @@ def transcribe_audio(audio_path, model_size="base"):  # Change model to "medium"
 
 
 def process_video(video_source, source_type="local", model_size="base"):
-    # if source_type == "youtube":
-    #     video_path = download_youtube_video(video_source)
-    # # elif source_type == "drive":
-    # #     video_path = download_drive_video(video_source)
-    # else:
-    # just in case
-
     
     video_path = download_video(video_source)
     # video_path = video_source  # Local file
@@ -130,7 +135,7 @@ def process_video(video_source, source_type="local", model_size="base"):
 
     # Cleanup
     os.remove(audio_path)
-    # os.remove(video_path)
+    os.remove(video_path)
 
     return text
 
@@ -140,57 +145,67 @@ def process_video(video_source, source_type="local", model_size="base"):
 
 
 
-# Function to process input
-def process_input(urls):
-    try:
-        model_local = Ollama(model="llama3")
 
-        # Convert string of URLs to list and filter out empty ones
+# ✅ Use a global Ollama model instance
+async def generate_response(prompt):
+    response = await asyncio.to_thread(
+        ollama.chat,
+        model="llama3",
+        messages=[{"role": "system", "content": prompt}]
+    )
+    return response["message"]["content"]
+
+async def process_input(urls):
+    try:
         urls_list = [url.strip() for url in urls.split("\n") if url.strip()]
         if not urls_list:
             return "Error: No valid URLs provided."
 
-        docs = [WebBaseLoader(url).load() for url in urls_list]
+        # ✅ Load documents concurrently
+        async def load_document(url):
+            return await asyncio.to_thread(WebBaseLoader(url).load)
+
+        doc_tasks = [load_document(url) for url in urls_list]
+        docs = await asyncio.gather(*doc_tasks)
         docs_list = [item for sublist in docs for item in sublist]
 
-        # Split the text into chunks
+        # ✅ Split text
         text_splitter = CharacterTextSplitter.from_tiktoken_encoder(chunk_size=10000, chunk_overlap=100)
-        doc_splits = text_splitter.split_documents(docs_list)
-
-        # Convert text chunks into embeddings and store in vector database
-        vectorstore = Chroma.from_documents(
+        doc_splits = await asyncio.to_thread(text_splitter.split_documents, docs_list)
+    
+        # ✅ Store in ChromaDB
+        vectorstore = await asyncio.to_thread(
+            Chroma.from_documents,
             documents=doc_splits,
             collection_name="rag-chroma",
-            embedding=embeddings.OllamaEmbeddings(model='nomic-embed-text'),
+            embedding=OllamaEmbeddings(model='nomic-embed-text'),
             persist_directory=CHROMA_DB_PATH
         )
         retriever = vectorstore.as_retriever()
 
-        # Enhanced RAG prompt for extracting a complete website summary
-        after_rag_template = """
-        Generate a comprehensive summary of the website content. The summary should include:
-        - Key topics and themes covered.
-        - Overall purpose and main objectives of the website.
-        - Notable sections or pages that provide valuable information.
-        - Any important insights derived from the content.
+        # ✅ Retrieve relevant content
+        retrieved_docs = await asyncio.to_thread(retriever.invoke, "Summarize this website")
+        context = "\n\n".join([doc.page_content for doc in retrieved_docs])
 
-        Provide a clear and structured summary that captures the essence of the website.
+        # ✅ Enhanced RAG prompt
+        summary_template = """
+        Summarize the website by describing:
+        - What the website is about
+        - What the website does
+        
         Context:
         {context}
         """
+        summary_prompt = ChatPromptTemplate.from_template(summary_template)
+        response_prompt = summary_prompt.format(context=context)
 
-        after_rag_prompt = ChatPromptTemplate.from_template(after_rag_template)
-        after_rag_chain = (
-                {"context": retriever}
-                | after_rag_prompt
-                | model_local
-                | StrOutputParser()
-        )
-        return after_rag_chain.invoke("")
+        # ✅ Generate summary
+        response = await generate_response(response_prompt)
+
+        return response
 
     except Exception as e:
         return f"Error: {str(e)}"
-
 
 
 
@@ -199,17 +214,15 @@ def extract_email_parts(email_text):
     if not email_text:
         return "No Subject Found", "No Body Found"
 
-    subject_pattern = r"(?i)Subject:\s*(.+)"
-    subject_match = re.search(subject_pattern, email_text)
+    # Extract subject
+    subject_pattern = r"(?i)^Subject:\s*(.+)"
+    subject_match = re.search(subject_pattern, email_text, re.MULTILINE)
     subject_text = subject_match.group(1).strip() if subject_match else "Not found"
 
-    pattern = re.compile(r"Subject:.*?\n(.*\n\S+@\S+)", re.DOTALL)
-    result = pattern.search(email_text)
-
-    if result:
-        body_text = result.group(1).strip()
-    else:
-        body_text = "No body found"
+    # Extract body (everything after subject line)
+    body_pattern = r"(?i)^Subject:.*?\n([\s\S]+)"
+    body_match = re.search(body_pattern, email_text, re.MULTILINE)
+    body_text = body_match.group(1).strip() if body_match else "No body found"
 
     return subject_text, body_text
 
@@ -219,72 +232,90 @@ def extract_email_parts(email_text):
 
 
 def train_model(my_company, my_designation, my_name, my_mail, my_work, client_name, client_company, client_designation,
-                client_website, client_website_issue, client_about_website):
-    system_prompt = f"""You are an outreach expert at {my_company} specializing in **custom, high-converting cold emails**. Your goal is to generate a **single compelling email** that feels natural, persuasive, and engaging—without being overly formal or robotic.  
+                client_website, client_website_issue, client_about_website, video_path, my_cta_link):
+    system_prompt = f"""You are an expert cold email writer at {my_company}. Your task is to generate a NEW, ORIGINAL email (subject line + body) that is FULLY PERSONALIZED using ONLY the provided input variables.
 
-Use the following **context**:  
-- **Company Name**: {my_company}  
-- **Your Role**: {my_designation} ({my_name})  
-- **Your Contact**: {my_mail}  
-- **Your Work**: {my_work}  
+### INPUT VARIABLES (THESE ARE THE ONLY VALUES YOU SHOULD USE):
+- SENDER: {my_name} = "[provided name]"
+- SENDER: {my_designation} = "[provided designation]"
+- SENDER: {my_company} = "[provided company]"
+- SENDER: {my_mail} = "[provided email]"
+- SENDER: {my_work} = "[provided work type]"
+- SENDER: {my_cta_link} = "[provided CTA link]"
+- RECIPIENT: {client_name} = "[provided client name]"
+- RECIPIENT: {client_company} = "[provided client company]"
+- RECIPIENT: {client_designation} = "[provided client designation]"
+- RECIPIENT: {client_website} = "[provided client website]"
+- RECIPIENT: {video_path} = "[provided video path]"
+- RECIPIENT: {client_website_issue} = "[provided client website issues]"
+- RECIPIENT: {client_about_website} = "[provided summary over client website]"
 
-- **Client Name**: {client_name}  
-- **Client Company**: {client_company}  
-- **Client Role**: {client_designation}   
-- **Client Website**: [{client_company} Website]({client_website})  
-- **Issue Identified**: {client_website_issue}  
-- **Insights from Website**: {client_about_website}  
+### IMPORTANT RULES:
+1. DO NOT USE ANY EXAMPLE CONTENT - create completely original text
+2. DO NOT MENTION "BizFlow", "CRM" or any other business not specified in the input
+3. ONLY reference the specific client company and website provided in the input
+4. ONLY offer services related to the specific {my_work} value provided
+5. NEVER copy text from examples - all content must be new and original
 
-**Tone**: Conversational, yet professional. Make it feel like a **helpful, friendly expert reaching out**, not a hard sales pitch.  
+### EMAIL STRUCTURE:
+1. SUBJECT LINE: Attention-grabbing, specific to {client_company}'s actual business
 
-**Your task:**  
-Generate **both a subject** and **a full email body**.  
+2. GREETING: Address {client_name} directly
 
-**Structure:**  
-1️ **Subject Line**:  
-   - Must be attention-grabbing but **not clickbait**.  
-   - Should immediately highlight value or relevance.  
-   - Keep it **short and engaging** (max 10 words).  
+3. OPENING: 
+   - Reference {client_company} and {client_website} specifically
+   - Mention you've created a video analysis about their website
 
-2️ **Email Body**:  
-  - **Opening**: Personal, warm, and engaging. Show you did your research.  
-  - **Pain Points**: Highlight the company’s challenges in a **human** way.  
-  - **Solution**: Clearly explain how {my_company} and {my_work} can **fix the problem**.  
-  - **Call-to-Action**: Casual but persuasive nudge to continue the conversation.  
+4. ISSUES (3-4 bullet points):
+   - Highlight specific website issues related to {my_work}
+   - Ensure they're relevant to the client's actual business
+   - Ensure some specific issues like {client_website_issue}
 
+5. VALUE PROPOSITION:
+   - Explain how {my_company} and {my_work} can solve their problems
+   - Mention the video you've created at {video_path}
 
+6. CALL-TO-ACTION:
+   - Invite them to watch the video at {video_path}
+   - Suggest using {my_cta_link} to schedule a call
 
-### **Example Output**  
+7. SIGNATURE:
+   - {my_name}
+   - {my_designation}, {my_company}
+   - {my_mail}
 
-**Subject:** Let’s Unlock {client_company}’s Website Potential
+### FINAL CHECK:
+- Verify your email ONLY mentions the specific client company provided
+- Confirm you're ONLY offering services related to the provided {my_work}
+- Ensure all content is completely original and not copied from examples
 
-**Email Body:**  
+### FORMAT YOUR OUTPUT EXACTLY LIKE THIS:
 
-Hey {client_name},  
+**Subject:** [Your subject line here]
 
-I checked out [{client_company}’s website]({client_website}), and I love what you’re building! But I noticed a few areas where small changes could make a **huge difference** in conversions and user experience.  
+Hey {client_name},
 
-Here’s what stood out:  
-✅ **Navigation issues** – Some sections feel tricky to access.  
-✅ **Performance optimizations** – Faster loading = happier visitors.  
-✅ **Accessibility improvements** – Let’s ensure a smooth experience for all users.  
-✅ **Contact info visibility** – Potential customers should find you easily!  
+[Your opening paragraph showing personalization and research]
 
-At {my_company}, we specialize in **{my_work}**, helping brands turn their websites into **high-performing assets**. A few quick optimizations could **boost engagement, usability, and business impact.**  
+Here's what I noticed:
+✅ [Specific issue #1 with business impact]
+✅ [Specific issue #2 with business impact]
+✅ [Specific issue #3 with business impact]
+✅ [Optional issue #4 with business impact]
 
-Would love to share some quick wins—open to a quick chat?  
+[Value proposition paragraph explaining how you can help]
 
-**Best,**  
-{my_name}  
-{my_designation}, {my_company}  
-{my_mail}  
+[Clear, casual call-to-action]
 
+Best,
+{my_name}
+{my_designation}, {my_company}
+{my_mail}
 
 
 ---
-### **Example 1: Website Optimization (Lively & Conversational)** 
+### **Example 1:
 
-- **Client Company**: Reachify Innovations 
 - **Issue Identified**: Content issues, navigation problems, slow performance. 
 - **Your Work**: Web developer offering improvements. 
 
@@ -316,9 +347,8 @@ Let me know your thoughts.
 
 
 ---
-### **Example 2: SEO & Digital Marketing (Lively & Engaging)** 
+### **Example 2:
 
-- **Client Company**: GrowthEdge Solutions 
 - **Issue Identified**: Low website traffic, weak SEO strategy. 
 - **Your Work**: SEO specialist optimizing search rankings. 
 
@@ -354,9 +384,9 @@ Think it’s worth a quick call? Let me know!
 
 
 ---
-### **Example 3: Mobile App Development (Energetic & Human-like)** 
+### **Example 3:
 
-- **Client Company**: FitGo App 
+- **Client Company**: {client_company} 
 - **Issue Identified**: Low user retention, slow app performance. 
 - **Your Work**: Mobile app developer fixing performance issues. 
 
@@ -369,7 +399,7 @@ Think it’s worth a quick call? Let me know!
 Hey {client_name}, 
 
 
-I love what you’re building with FitGo! A **fitness app that motivates users? Genius.** But I noticed something that might be holding you back—users aren’t sticking around, and I think I know why. 
+I love what you’re building with {client_company}! A **fitness app that motivates users? Genius.** But I noticed something that might be holding you back—users aren’t sticking around, and I think I know why. 
 
 
 Common app pain points I see: 
@@ -395,9 +425,9 @@ What do you think?
 
 
 ---
-### **Example 4: Social Media Ad Optimization (High-Energy, Sales-Driven)** 
+### **Example 4:
 
-- **Client Company**: FreshBites Meal Service 
+- **Client Company**: {client_company} 
 - **Issue Identified**: Low engagement on social media ads. 
 - **Your Work**: Social media ads expert improving conversions. 
 
@@ -434,9 +464,9 @@ Interested? Let’s chat—I’d love to help.
 
 
 ---
-### **Example 5: Software Development (Engaging & Persuasive)** 
+### **Example 5:
 
-- **Client Company**: BizFlow CRM 
+- **Client Company**: {client_company}
 - **Issue Identified**: Outdated CRM software, user complaints. 
 - **Your Work**: Software developer upgrading outdated systems. 
 
@@ -449,7 +479,7 @@ Interested? Let’s chat—I’d love to help.
 Hey {client_name}, 
 
 
-I know how frustrating it can be when your CRM **starts slowing things down instead of speeding them up**. I took a look at BizFlow, and I think a few strategic upgrades could **massively improve efficiency and user experience.** 
+I know how frustrating it can be when your CRM **starts slowing things down instead of speeding them up**. I took a look at {client_company}, and I think a few strategic upgrades could **massively improve efficiency and user experience.** 
 
 
 Some quick wins we could tackle: 
@@ -458,7 +488,7 @@ Some quick wins we could tackle:
 📈 **UI/UX improvements**—modern design = happier users. 
 
 
-I’ve helped other businesses **upgrade without disrupting operations**, and I’d love to do the same for BizFlow. Let’s talk? 
+I’ve helped other businesses **upgrade without disrupting operations**, and I’d love to do the same for {client_company}. Let’s talk? 
 
 
 **Best,**
@@ -477,61 +507,54 @@ I’ve helped other businesses **upgrade without disrupting operations**, and I�
 
 def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_name, client_company,
                   client_designation, client_website, client_website_issue, client_about_website,
-                  my_cta_link, my_body_text, video_path):
-    system_prompt_1 = f"""You are an expert in generating precise, structured, and visually appealing **HTML email**. Your primary task is to **convert the provided email body text (`{my_body_text}`) into a clean, responsive HTML email** with proper formatting while ensuring no alterations to the content.
+                  my_cta_link, email_body_text, video_path):
+    system_prompt_1 = f"""You are an expert HTML email designer specializing in creating professional, responsive emails for business outreach. Your task is to convert the provided text into a polished HTML email that effectively utilizes all client and sender information.
 
-    ### **User Inputs:**
-    - **Sender Details**:
-      - Name: {my_name}
-      - Designation: {my_designation}
-      - Company: {my_company}
-      - Email: {my_mail}
-      - Work Type: {my_work}
-      - CTA Link: {my_cta_link}
-      - Video Path: {video_path}
-    - **Recipient Details**:
-      - Name: {client_name}
-      - Designation: {client_designation}
-      - Company: {client_company}
-      - Website: {client_website}
-      - Website Issues: {client_website_issue}
-      - About Website Analysis: {client_about_website}
+### INPUT VARIABLES:
+- SENDER: {my_name}, {my_designation}, {my_company}, {my_mail}, {my_work}
+- RECIPIENT: {client_name}, {client_designation}, {client_company}, {client_website}
+- CONTENT: {email_body_text}, {client_website_issue}, {client_about_website}
+- ACTION ELEMENTS: {my_cta_link}, {video_path}
 
-    - **Email Body**:
-      - The **entire email body (`{my_body_text}`) must be inserted as-is** into a properly structured HTML format.
-      - **No edits, rewording, or restructuring**—just **pure formatting**.
-      - Headings, paragraphs, bullet points, and key highlights should **follow the existing structure**.
+### REQUIREMENTS:
+1. CREATE A FULLY RESPONSIVE HTML EMAIL that:
+   - Maintains the original message intent in {email_body_text} without omitting or altering key details.
+   - Addresses specific issues mentioned in {client_website_issue}
+   - Incorporates insights from {client_about_website}
+   - Presents a professional appearance aligned with {my_work} industry standards
 
-    ### **HTML Template Requirements:**
-    1. **Content Formatting**:
-       - Convert `{my_body_text}` directly into **HTML with proper `<h1>`, `<h2>`, `<p>`, `<ul>`, `<strong>`, and `<em>` tags** where needed.
-       - Maintain line breaks, indentation, and spacing **exactly as in the original text**.
-       - Use **consistent typography** for readability.
-       - 
+2. PERSONALIZATION:
+   - Directly address {client_name} and reference {client_company} naturally
+   - Reference {client_website} specifically when discussing improvements
+   - Tailor content to match the sender's expertise ({my_work})
+   - Ensure all sender details appear in a professional signature
 
+3. VISUAL STRUCTURE:
+   - Use clear headings, concise paragraphs, and bullet points for readability
+   - Include properly styled buttons for {my_cta_link} and {video_path}
+   - Maintain consistent spacing, fonts, and color scheme throughout
+   - Optimize for both desktop and mobile viewing
 
-    2. **Responsive Design**:
-       - Ensure the email is **mobile-friendly** and adapts to different screen sizes.
-       - Use **External CSS** to maintain compatibility across different email clients.
+4. TECHNICAL REQUIREMENTS:
+   - Include all necessary HTML structure (DOCTYPE, head, body)
+   - Use inline CSS for maximum email client compatibility
+   - Ensure all links are properly formatted and functioning
+   - Create a professional signature block with all sender details
 
-    3. **Call-to-Action (CTA)**:
-       - If `{video_path}` is provided, include a **visually clear btn** styled for engagement.
-       - If `{my_cta_link}` is provided, include a **visually clear btn** styled for engagement.
-       - The CTA **should match the intent of `{my_body_text}`** without modifying its wording.
+5. AVOID:
+   - Omitting or modifying key details from {email_body_text}.
+   - Complex HTML elements that may break in email clients
+   - Unnecessary images or large file elements
+   - Generic copy that doesn't utilize the specific variables provided
+   - Outdated design patterns or poor mobile responsiveness
 
-    4. **Style Guidelines**:
-       - Use a **clean, professional, and minimalistic design**.
-       - Ensure **proper spacing** for better readability.
-       - The background should be **subtle** to enhance text clarity.
-       - **No excessive styling**—focus on clarity and structure.
-
-    ---
+OUTPUT: Provide a complete, ready-to-use HTML email that seamlessly integrates all variables and meets professional standards for business communication.
 
     ### **Output Format:**
-    Generate a **fully formatted HTML email** with External styles, ensuring `{my_body_text}` remains **unaltered** while being properly structured for readability. The footer should be correctly generated at end  contain my_name, my_designation, my_company and my email ef provided.
+    Generate a **fully formatted HTML email** with External styles, ensuring `{email_body_text}` remains **unaltered** while being properly structured for readability. The footer should be correctly generated at end  contain my_name, my_designation, my_company and my email if provided.
 
     ---
-** Use the below formats as example and generate a customized html email according to the body text data given:
+** Use the below html templates as example and generate a customized html email according to the body text given also make sure to customize the email content according to "About Website Analysis":
 
 
 ### **💡 Example 1: 
@@ -794,7 +817,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
             <p><a href="{video_path}" class="btn">🎥 Watch Video</a></p>
         </div>
 
-        <p>Let’s chat about <strong>simple, high-impact changes</strong> that can help {client_company} thrive online.</p>
+        <p>Let’s chat about <strong>simple, high impact changes</strong> that can help {client_company} thrive online.</p>
 
         
 
@@ -852,15 +875,15 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 
         <h3>Key Enhancements:</h3>
         <ul>
-            <li>✔️ Faster load times for <strong>better engagement</strong></li>
-            <li>✔️ Enhanced design consistency <strong>for brand trust</strong></li>
-            <li>✔️ Improved contact forms <strong>for more leads</strong></li>
+            <li> Faster load times for <strong>better engagement</strong></li>
+            <li> Enhanced design consistency <strong>for brand trust</strong></li>
+            <li> Improved contact forms <strong>for more leads</strong></li>
         </ul>
 
         <p>I’ve created a short video explaining the possible improvements. You can watch it below:</p>
         <p style="text-align: center;"><a href="{video_path}" class="btn">🎥 Watch Video</a></p>
         
-        <p>Let’s chat about <strong>simple, high-impact changes</strong> that can help {client_company} thrive online.</p>
+        <p>Let’s chat about <strong>simple, high impact changes</strong> that can help {client_company} thrive online.</p>
         <p><a href="{my_cta_link}" class="btn">Let’s Connect & Improve</a></p>
         
         <p>Best,<br><br>{my_name}<br>{my_designation}<br>{my_company}<br><a href="mailto:{my_mail}">{my_mail}</a></p>
@@ -914,9 +937,9 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 
         <h3>Key Areas for Improvement:</h3>
         <ul>
-            <li>✔️ Code optimization for <strong>faster load times</strong></li>
-            <li>✔️ Security patches to <strong>safeguard user data</strong></li>
-            <li>✔️ UX/UI enhancements for <strong>seamless navigation</strong></li>
+            <li> Code optimization for <strong>faster load times</strong></li>
+            <li> Security patches to <strong>safeguard user data</strong></li>
+            <li> UX/UI enhancements for <strong>seamless navigation</strong></li>
         </ul>
 
         <p>I’ve put together a quick analysis video with tailored insights for {client_company}. Check it out below:</p>
@@ -1039,9 +1062,9 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 
         <h3>Key Optimization Areas:</h3>
         <ul>
-            <li>✔️ Stronger CTA placements for <strong>higher engagement</strong></li>
-            <li>✔️ Faster load speed to <strong>reduce drop-offs</strong></li>
-            <li>✔️ Clearer messaging for <strong>better user understanding</strong></li>
+            <li> Stronger CTA placements for <strong>higher engagement</strong></li>
+            <li> Faster load speed to <strong>reduce drop-offs</strong></li>
+            <li> Clearer messaging for <strong>better user understanding</strong></li>
         </ul>
 
         <p>I’ve put together a quick video breakdown with insights tailored to {client_company}. Check it out below:</p>
@@ -1100,7 +1123,7 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 </head>
 <body>
     <div class="container">
-        <!-- Template 5: SEO Strategy Outreach -->
+        
         <h2>Hi {client_name}, Let’s Boost {client_company}’s SEO! 🚀</h2>
         <p>I performed a quick SEO audit on {client_company} and found some <strong>key areas for improvement</strong> that can enhance your search rankings.</p>
 
@@ -1125,6 +1148,101 @@ def train_model_2(my_company, my_designation, my_name, my_mail, my_work, client_
 ---
 
 
+### **💡 Example 10: automobile brand
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {{
+  font-family: 'Arial', sans-serif;
+  color: #444;
+  background-color: #f4f4f4;
+  padding: 20px;
+}}
+.container {{
+  max-width: 600px;
+  background: white !important;
+  padding: 30px;
+  margin: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}}
+.header {{
+  color: #333;
+  margin-bottom: 20px;
+}}
+.btn {{
+  display: block;
+  text-align: center;
+  background-color: #007bff;
+  color: white !important;
+  padding: 14px;
+  margin-top: 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+}}
+.video-container {{
+  margin: 25px 0;
+  text-align: center;
+}}
+.footer {{
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}}
+ul {{
+  padding-left: 20px;
+}}
+li {{
+  margin-bottom: 10px;
+}}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2 class="header">Elevate {client_company} Digital Experience</h2>
+  
+  <p>Hello Raghav,</p>
+  
+  <p>I hope this email finds you well. I'm {my_name}, {my_designation} at {my_company}, and I recently spent some time analyzing <strong>{client_company} website</strong>.</p>
+  
+  <p>As passionate advocates for premium user experiences, we believe your iconic brand deserves a digital presence that matches the power and elegance of your product.</p>
+  
+  <h3>Areas of Opportunity I've Identified:</h3>
+  <ul>
+    <li>🚀 <strong>Performance optimization</strong> - Reducing load times for a smoother browsing experience</li>
+    <li>🎨 <strong>UI refinements</strong> - Enhancing visual hierarchy to better highlight your premium products</li>
+    <li>📱 <strong>Mobile responsiveness</strong> - Creating a seamless experience across all devices</li>
+    <li>🔍 <strong>User journey mapping</strong> - Streamlining the path from discovery to purchase</li>
+  </ul>
+  
+  <p>I've created a brief video analysis outlining specific improvements that could help increase engagement and conversions:</p>
+  
+  <div class="video-container">
+    <a href="{video_path}" class="btn">🎥 Watch Your Website Analysis</a>
+  </div>
+  
+  <p>These enhancements could significantly impact your customer experience while maintaining the premium feel of the {client_company} brand. I'd be happy to discuss how we can implement these changes with minimal disruption to your current operations.</p>
+  
+  <a href="{my_cta_link}" class="btn">Schedule a 15-Minute Discovery Call</a>
+  
+  <p>Looking forward to the possibility of helping {client_company} achieve an even more impressive digital presence.</p>
+  
+  <div class="footer">
+    <p>Best regards,<br><br>
+    {my_name}<br>
+    {my_designation}<br>
+    <a href="mailto:{my_mail}">{my_mail}</a></p>
+  </div>
+</div>
+</body>
+</html>
+
+---
+
 **  IMPORTANT **
 
 Generate only one custom html email on the basis of body text provided.
@@ -1140,10 +1258,18 @@ Generate only one custom html email on the basis of body text provided.
 
 
 
-def generate_response(system_prompt):
-    response = ollama.chat(model='llama3', messages=[{"role": "system", "content": system_prompt}])
-    return response['message']['content']
 
+
+# ✅ Create a global Ollama instance
+# ollama_model = ollama.Ollama(model="llama3")
+
+
+# def generate_response(system_prompt):
+#     response = ollama.chat(
+#         model="llama3",
+#         messages=[{"role": "system", "content": system_prompt}]
+#     )
+#     return response["message"]["content"]  # ✅ Extract content properly
 
 
 
