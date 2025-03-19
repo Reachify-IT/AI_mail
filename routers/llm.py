@@ -1205,7 +1205,7 @@ li {{
 <div class="container">
   <h2 class="header">Elevate {client_company} Digital Experience</h2>
   
-  <p>Hello Raghav,</p>
+  <p>Hello {client_name},</p>
   
   <p>I hope this email finds you well. I'm {my_name}, {my_designation} at {my_company}, and I recently spent some time analyzing <strong>{client_company} website</strong>.</p>
   
